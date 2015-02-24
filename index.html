@@ -22,14 +22,15 @@
 </head>
 
 <body>
-	<div id="main_content" class="main_content"></div>
+	<div id="main_content" class="main_content">
+        <div class="loader">Loading...</div>
+    </div>
     <script src='node_modules/requirejs/require.js'></script>
 </body>
 <script>
     if (!window.console) {var console = {};}
     if (!console.log) {console.log = function() {};}
-    require(['main'], function () {
-        require(['routing'], function () {});
+    require(['main', 'routing', 'domReady!'], function () {
     });
 </script>
 </html>

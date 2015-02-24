@@ -1,7 +1,6 @@
 require(
     ['jquery',
-    'backbone',
-    'domReady!'], function($, Backbone) {
+    'backbone'], function($, Backbone) {
 
     var ApplicationRouter = Backbone.Router.extend({
 

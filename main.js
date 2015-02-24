@@ -20,8 +20,8 @@ requirejs.config({
         'leaflet': 'node_modules/leaflet/dist/leaflet',
         'jquery.power.tip': 'node_modules/jquery-powertip/dist/jquery.powertip.min',
         'jquery-ui':   'http://fenixapps.fao.org/repository/js/jquery-ui/1.10.3/jquery-ui-1.10.3.custom.min',
-        'jquery.i18n.properties':   'http://fenixapps.fao.org/repository/js/jquery/1.0.9/jquery.i18n.properties-min',
-        'jquery.hoverIntent':   'http://fenixapps.fao.org/repository/js/jquery.hoverIntent/1.0/jquery.hoverIntent',
+        'jquery.i18n.properties': 'http://fenixapps.fao.org/repository/js/jquery/1.0.9/jquery.i18n.properties-min',
+        'jquery.hoverIntent': 'http://fenixapps.fao.org/repository/js/jquery.hoverIntent/1.0/jquery.hoverIntent',
 
         'fenix-map': 'libs/fenix-ui-map/fenix-ui-map.min',
         'fenix-map-config': 'libs/fenix-ui-map/fenix-ui-map-config',
