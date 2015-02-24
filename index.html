@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"> 
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>FENIX</title>
+
+    <!--<meta name='viewport' content='width=device-width, initial-scale=1.0'>-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="node_modules/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="node_modules/jquery-powertip/css/jquery.powertip.css" type="text/css" />
+    <link rel="stylesheet" href="node_modules/jquery-ui-1.10.3/jquery-ui-1.10.3.custom.min.css" />
+    <link rel="stylesheet" href="node_modules/chosen-jquery/lib/chosen.min.css">
+
+    <!-- Fenix Map js -->
+    <link rel="stylesheet" href="fenix-ui-map/fenix-ui-map.min.css" />
+
+    <!-- Style -->
+    <link rel="stylesheet" href="css/main.css" />
+</head>
+
+<body>
+	<div id="main_content" class="main_content"></div>
+    <script src='node_modules/requirejs/require.js'></script>
+</body>
+<script>
+    if (!window.console) {var console = {};}
+    if (!console.log) {console.log = function() {};}
+    require(['main'], function () {
+        require(['routing'], function () {});
+    });
+</script>
+</html>
+
