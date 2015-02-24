@@ -40,7 +40,7 @@ define(['jquery',
             attributionControl: false
         });
         m.createMap();
-        m.zoomTo("country", "iso3", ["THA"]);
+        m.map.fitBounds([[20.4632205963135, 97.3455867767334], [5.61052131652832, 105.639387130737]]);
 
 
         var joincolumnlabel = 'adm2_name';
