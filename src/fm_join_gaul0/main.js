@@ -57,7 +57,7 @@ define(['jquery',
         var layer = new FM.layer({
             layers: 'fenix:gaul0_faostat_3857',
             layertitle: 'Rice Paddy Production 2013',
-            opacity: '0.7',
+            opacity: '0.6',
             joincolumn: joincolumn,
             joincolumnlabel: joincolumnlabel,
             joindata: JSON.stringify(data),
