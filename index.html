@@ -30,7 +30,8 @@
 <script>
     if (!window.console) {var console = {};}
     if (!console.log) {console.log = function() {};}
-    require(['main', 'routing', 'domReady!'], function () {
+    require(['main'], function () {
+        require(['routing', 'domReady!'], function () {});
     });
 </script>
 </html>
