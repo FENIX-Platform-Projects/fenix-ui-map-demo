@@ -42,7 +42,8 @@
     "domReady": "https://github.com/requirejs/domReady/tarball/master",
     "jquery-powertip": "https://github.com/stefanocudini/jquery-powertip/tarball/master",
     "csvjson": "https://github.com/stefanocudini/csvjson.js/tarball/master",
-    "jquery-ui": "http://fenixapps.fao.org/repository/js/jquery-ui/jquery-ui-1.10.3.tgz"
+    "jquery-ui": "http://fenixapps.fao.org/repository/js/jquery-ui/jquery-ui-1.10.3.tgz",
+    "jquery.hoverIntent": "http://fenixapps.fao.org/repository/js/jquery.hoverIntent/jquery.hoverIntent-1.8.0.tgz"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

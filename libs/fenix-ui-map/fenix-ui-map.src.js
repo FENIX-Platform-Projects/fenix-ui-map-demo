@@ -1,5 +1,5 @@
 /* 
- * fenix-ui-map v0.0.1 - 2015-02-24 
+ * fenix-ui-map v0.0.1 - 2015-03-04 
  * Copyright 2015  
  * FENIX Development Team 
  * 
@@ -555,18 +555,15 @@ FM.WMSUtils = FM.Class.extend({
         url += '&request=GetCapabilities';
         url += '&urlWMS=' + wmsServerURL;
 
-        var _this = this;
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', url, true);
-        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-        xhr.onload = function () {
-            // do something to response
-            var response = this.responseText;
-            var xmlResponse = $.parseXML( response );
-            _this._createWMSOutput(id, fenixmap, xmlResponse, wmsServerURL)
-        };
-        xhr.send();
-
+         var _this = this;
+         $.ajax({
+             type: "GET",
+             url: url,
+             success: function(response) {
+                 var xmlResponse = $.parseXML( response );
+                 _this._createWMSOutput(id, fenixmap, xmlResponse, wmsServerURL)
+             }
+         });
     },
 
     _createWMSOutput: function(id, fenixmap, xmlResponse, wmsServerURL ) {
@@ -575,23 +572,31 @@ FM.WMSUtils = FM.Class.extend({
         $(xmlResponse).find('Layer').each(function() {
 
             if ($(this).children("Name").text() && $(this).children("Name").text() != '') {
-                var rand = FM.Util.randomID();
-                var layerPanel = FM.replaceAll(FM.guiController.wmsLoaderLayer, 'REPLACE', rand);
-                $("#" + id).append(layerPanel);
-                $('#' + rand + '-WMSLayer-title').append($(this).children("Title").text());
-                $('#' + rand + '-WMSLayer-title').attr( "title", $(this).children("Title").text());
-                try { $('#' + rand + '-WMSLayer-title').powerTip({placement: 'n'}); } catch (e) {}
-
 
                 var layer = {};
                 layer.layers= $(this).children("Name").text();
                 layer.layername= $(this).children("Name").text();
                 layer.layertitle=$(this).children("Title").text();
-                layer.style = $(this).children("Style").children("Name").text();
+
+                //TODO: dirty quick TITLE fix for DEMO
+                layer.layertitle = layer.layertitle.replace(/_/g,' ');
+                layer.layertitle = layer.layertitle.replace(/3857/g,' ');
+
+                layer.styles = $(this).children("Style").children("Name").text();
                 layer.urlWMS = wmsServerURL;
                 // setting the default CRS of the map
                 layer.srs = fenixmap.map.options.crs.code;
                 layer.openlegend = true; //this will open the legend by on preview (choose on add if we want to leave it open **/
+
+
+                var rand = FM.Util.randomID();
+                var layerPanel = FM.replaceAll(FM.guiController.wmsLoaderLayer, 'REPLACE', rand);
+
+                $("#" + id).append(layerPanel);
+                $('#' + rand + '-WMSLayer-title').append(layer.layertitle);
+                $('#' + rand + '-WMSLayer-title').attr( "title",layer.layertitle);
+                try { $('#' + rand + '-WMSLayer-title').powerTip({placement: 'n'}); } catch (e) {}
+
 
                 // TODO: get bounding box with the current CRS
                 $("#" + rand + "-WMSLayer-box").click({fenixmap:fenixmap, layer: layer}, function(event) {
@@ -601,7 +606,9 @@ FM.WMSUtils = FM.Class.extend({
 
                     // TODO: multilanguage PopUp onAdd
                     var content = 'The Layer <b>' + event.data.layer.layertitle + '</b><br> has been added to the map';
-                    FMPopUp.init({ parentID: event.data.fenixmap.id, content: content})
+                    try {
+                        FMPopUp.init({parentID: event.data.fenixmap.id, content: content})
+                    }catch(e) {}
 
                 });
 
@@ -609,11 +616,11 @@ FM.WMSUtils = FM.Class.extend({
                 var _fenixMap = fenixmap;
                 var _layer =  $.extend(true, {}, layer);
                 //_layer.hideLayerInControllerList = true;
-                var _tmpLayer = new FM.layer(_layer, _fenixMap);
+                var _tmpLayer = new FM.layer(_layer);
                 try {
                     $("#" + rand + "-WMSLayer-box").hoverIntent({
-                        over: function () { _tmpLayer.addLayer();    },
-                        out:  function () { _tmpLayer.removeLayer(); },
+                        over: function () { _fenixMap.addLayer(_tmpLayer);},
+                        out:  function () { _fenixMap.removeLayer(_tmpLayer);},
                         timeout: 500
                     });
                 }catch(e) {
@@ -639,16 +646,14 @@ FM.WMSUtils = FM.Class.extend({
         url += '&urlWMS=' + wmsServerURL;
 
         var _this = this;
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', url, true);
-        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-        xhr.onload = function () {
-            // do something to response
-            var response = this.responseText;
-            var xmlResponse = $.parseXML( response );
-            _this._createWMSDropwDown(id, fenixmap, xmlResponse, wmsServerURL)
-        };
-        xhr.send();
+        $.ajax({
+            type: "GET",
+            url: url,
+            success: function(response) {
+                var xmlResponse = $.parseXML(response);
+                _this._createWMSDropwDown(id, fenixmap, xmlResponse, wmsServerURL)
+            }
+        });
     },
 
     _createWMSDropwDown: function(id, fenixmap, xmlResponse, wmsServerURL ) {
@@ -657,15 +662,15 @@ FM.WMSUtils = FM.Class.extend({
             var rand = FM.Util.randomID();
             if ($(this).children("Name").text()) {
 
-                $("#" + id).append("<div id='WMSLayer-"+ rand +"'>" + $(this).children("Title").text() + " + " +  $(this).children("Style").children("Name").text() + " <div>");
-
                 var layer = {};
-                layer.layers= $(this).children("Name").text();
-                layer.layername= $(this).children("Name").text();
-                layer.layertitle=$(this).children("Title").text();
-                layer.style = $(this).children("Style").children("Name").text();
+                layer.layers = $(this).children("Name").text();
+                layer.layername = $(this).children("Name").text();
+                layer.layertitle =$(this).children("Title").text();
+                layer.styles = $(this).children("Style").children("Name").text();
                 layer.urlWMS = wmsServerURL;
                 layer.openlegend = true;
+
+                $("#" + id).append("<div id='WMSLayer-"+ rand +"'>ddd" + layer.layertitle + " + " +  layer.styles + " <div>");
 
                 // setting the default CRS of the map
                 layer.srs = fenixmap.map.options.crs.code;
@@ -687,18 +692,15 @@ FM.WMSUtils = FM.Class.extend({
         url += '&request=GetCapabilities';
         url += '&urlWMS=' + wmsServerURL;
 
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', url, true);
-        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-        xhr.onload = function () {
-            // do something to response
-            var response = this.responseText;
-
-            var xmlResponse = $.parseXML( response );
-
-            FM.WMSUtils._createWMSDropwDown(id, fenixmap, xmlResponse, wmsServerURL)
-        };
-        xhr.send();
+        var _this = this;
+        $.ajax({
+            type: "GET",
+            url: url,
+            success: function(response) {
+                var xmlResponse = $.parseXML(response);
+                FM.WMSUtils._createWMSDropwDown(id, fenixmap, xmlResponse, wmsServerURL)
+            }
+        });
     },
 
     _createWFSDropwDown: function(id, fenixmap, xmlResponse, wmsServerURL ) {
@@ -1031,9 +1033,9 @@ FM.WMSSERVERS = {
 
     DEFAULT_EXTERNAL_WMS_SERVERS: [
         {
-            label: 'FENIX WMS Server',
+            label: 'FENIX Crops Area',
             label_EN: 'FENIX', // not currently used for the multilingual, it is needed?
-            url: 'http://hqlprfenixapp2.hq.un.fao.org:12100/geoserver/wms'
+            url: 'http://fenix.fao.org:20200/geoserver/earthstat/wms'
         },
 //        {
 //            label: 'FENIX WMS Server',
@@ -1041,8 +1043,8 @@ FM.WMSSERVERS = {
 //            url: 'http://fenixapps.fao.org/geoserver'
 //        },
         {
-            label: 'DATA FAO ORG',
-            label_EN: 'DATA FAO ORG',
+            label: 'DATA.FAO.ORG',
+            label_EN: 'data.fao.org WMS Server',
             //url: 'http://data.fao.org/maps/wms?AUTHKEY=d30aebf0-ab2a-11e1-afa6-0800200c9a66'
             url: 'http://data.fao.org/maps/wms'
         },
@@ -1086,36 +1088,36 @@ FM.WMSSERVERS = {
             label_EN: 'OpenGeo Demo Server',
             url: 'http://demo.opengeo.org/geoserver/ows'
         },
-        {
-            label: 'HarvestChoice 1',
-            label_EN: 'HarvestChoice 1',
-            url: 'http://apps.harvestchoice.org/arcgis/services/MapServices/cell_values_1/MapServer/WMSServer'
-        },
-        {
-            label: 'HarvestChoice 2',
-            label_EN: 'HarvestChoice 2',
-            url: 'http://apps.harvestchoice.org/arcgis/services/MapServices/cell_values_2/MapServer/WMSServer'
-        },
-        {
-            label: 'HarvestChoice 3',
-            label_EN: 'HarvestChoice 3',
-            url: 'http://apps.harvestchoice.org/arcgis/services/MapServices/cell_values_3/MapServer/WMSServer'
-        },
-        {
-            label: 'HarvestChoice 4',
-            label_EN: 'HarvestChoice 4',
-            url: 'http://apps.harvestchoice.org/arcgis/services/MapServices/cell_values_4/MapServer/WMSServer'
-        },
-        {
-            label: 'HarvestChoice 5',
-            label_EN: 'HarvestChoice 5',
-            url: 'http://apps.harvestchoice.org/arcgis/services/MapServices/cell_values_5/MapServer/WMSServer'
-        },
-        {
-            label: 'HarvestChoice 6',
-            label_EN: 'HarvestChoice 6',
-            url: 'http://apps.harvestchoice.org/arcgis/services/MapServices/cell_values_6/MapServer/WMSServer'
-        },
+        //{
+        //    label: 'HarvestChoice 1',
+        //    label_EN: 'HarvestChoice 1',
+        //    url: 'http://apps.harvestchoice.org/arcgis/services/MapServices/cell_values_1/MapServer/WMSServer'
+        //},
+        //{
+        //    label: 'HarvestChoice 2',
+        //    label_EN: 'HarvestChoice 2',
+        //    url: 'http://apps.harvestchoice.org/arcgis/services/MapServices/cell_values_2/MapServer/WMSServer'
+        //},
+        //{
+        //    label: 'HarvestChoice 3',
+        //    label_EN: 'HarvestChoice 3',
+        //    url: 'http://apps.harvestchoice.org/arcgis/services/MapServices/cell_values_3/MapServer/WMSServer'
+        //},
+        //{
+        //    label: 'HarvestChoice 4',
+        //    label_EN: 'HarvestChoice 4',
+        //    url: 'http://apps.harvestchoice.org/arcgis/services/MapServices/cell_values_4/MapServer/WMSServer'
+        //},
+        //{
+        //    label: 'HarvestChoice 5',
+        //    label_EN: 'HarvestChoice 5',
+        //    url: 'http://apps.harvestchoice.org/arcgis/services/MapServices/cell_values_5/MapServer/WMSServer'
+        //},
+        //{
+        //    label: 'HarvestChoice 6',
+        //    label_EN: 'HarvestChoice 6',
+        //    url: 'http://apps.harvestchoice.org/arcgis/services/MapServices/cell_values_6/MapServer/WMSServer'
+        //},
         {
             label: 'Alberts Map Service',
             url: 'http://maps.gov.bc.ca/arcserver/services/Province/albers_cache/MapServer/WMSServer',
@@ -1340,11 +1342,8 @@ FM.Map = FM.Class.extend({
     },
 
     _createShadeLayer: function(l, response, isReload){
-        console.log("_createShadeLayer")
-        console.log(response)
         if (typeof response == 'string')
             response = $.parseJSON(response);
-        console.log(response)
         l.layer.sldurl = response.sldurl;
         l.layer.urlWMS = response.geoserverwms;
         l.layer.legendHTML = response.legendHTML;
@@ -3115,19 +3114,21 @@ FM.MapUtils = function() {
         return sld;
     };
 
-    var fitWorldByScreen = function(m) {
+    var fitWorldByScreen = function(m, bounds) {
     	//http://stackoverflow.com/questions/6048975/google-maps-v3-how-to-calculate-the-zoom-level-for-a-given-bounds
 
-		var worldBB = L.latLngBounds([[-90, -180], [90, 180]]),
+		var worldBounds = L.latLngBounds([[-90, -180], [90, 180]]),
+			targetBounds = bounds instanceof L.LatLngBounds ? bounds : worldBounds,
+
 			GLOBE_WIDTH = 190, // a constant in Google's map projection
 			GLOBE_HEIGHT = 190, // a constant in Google's map projection
 
-			west = worldBB.getSouthWest().lng,
-			east = worldBB.getNorthEast().lng,
+			west = targetBounds.getSouthWest().lng,
+			east = targetBounds.getNorthEast().lng,
 			angleW = east - west,
 
-			north = worldBB.getNorthEast().lat,
-			south = worldBB.getSouthWest().lat,
+			north = targetBounds.getNorthEast().lat,
+			south = targetBounds.getSouthWest().lat,
 			angleH = north - south,
 
 			mapW = m.getSize().x,
@@ -3161,8 +3162,6 @@ FM.Plugins = {
         if ( show ) {
             //$("#" + _fenixmap.mapContainerID).append("<div class='fm-icon-box-background fm-btn-icon fm-fullscreen'><div class='fm-icon-sprite fm-icon-fullscreen' id='"+ _fenixmap.suffix +"-fullscreenBtn'><div></div>");
            // FM.UIUtils.fullscreen(_fenixmap.suffix +"-fullscreenBtn", _fenixmap.mapContainerID);
-
-            console.log(_fenixmap.options.gui.fullscreenID);
             $("#" + _fenixmap.mapContainerID).append("<div class='fm-icon-box-background fm-btn-icon fm-fullscreen'><div class='fm-icon-sprite fm-icon-fullscreen' id='"+ _fenixmap.suffix +"-fullscreenBtn'><div></div>");
             FM.UIUtils.fullscreen(_fenixmap.suffix +"-fullscreenBtn", _fenixmap.options.gui.fullscreenID);
         }
