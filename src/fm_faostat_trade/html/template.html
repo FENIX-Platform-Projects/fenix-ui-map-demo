@@ -1,0 +1,59 @@
+<template id="template">
+    <div class="row">
+        <div class="col-xs-3">
+            <h5 class="text-primary">Country</h5>
+            <div id="area"></div>
+        </div>
+        <div class="col-xs-4">
+            <h5 class="text-primary">Commodity</h5>
+            <div id="item"></div>
+        </div>
+        <div class="col-xs-2">
+            <h5 class="text-primary">&nbsp</h5>
+            <div id="fromyear"></div>
+        </div>
+        <div class="col-xs-2">
+            <h5 class="text-primary">&nbsp</h5>
+            <div id="toyear"></div>
+        </div>
+        <div class="col-xs-1">
+            <h5 class="text-primary">&nbsp</h5>
+            <button id="apply" type="button" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-search"></span></button>
+        </div>
+    </div>
+
+    <div class="row" style="display:none;" id="importmap-container">
+        <div class="col-md-12 col-lg-12">
+            <h3><span class="glyphicon glyphicon-import"></span><strong>&nbsp Imports</strong></h3>
+        </div>
+        <div class="col-md-6 col-lg-6" style="display:none">
+            <h4><strong>Growth Rate</strong></h4>
+            <div id="importmap-growthrate" class="fm-box" style="display:none; overflow: hidden; margin: 0 auto; text-align: left;height: 400px;"></div>
+
+        </div>
+        <div class="col-md-6 col-lg-6">
+            <h4><strong>Average Import Value (1000 US$)</strong></h4>
+            <div id="importmap-avg" style="display:none; margin-top:10px;  overflow: hidden; margin: 0 auto; text-align: left;height: 400px;"></div>
+        </div>
+        <div class="col-md-6 col-lg-6">
+            <h4 id="importmap-nodata">No Data available</h4>
+        </div>
+    </div>
+
+    <div class="row" style="display:none;" id="exportmap-container">
+        <div class="col-md-12 col-lg-12">
+            <h3><span class="glyphicon glyphicon-import"></span><strong>&nbsp Exports</strong></h3>
+        </div>
+        <div class="col-md-6 col-lg-6" style="display:none">
+            <h4><strong>Growth Rate</strong></h4>
+            <div id="exportmap-growthrate" class="fm-box" style="display:none; overflow: hidden; margin: 0 auto; text-align: left;height: 400px;"></div>
+        </div>
+        <div class="col-md-6 col-lg-6">
+            <h4><strong>Average Emport Value (1000 US$)</strong></h4>
+            <div id="exportmap-avg" style="display:none; margin-top:10px;  overflow: hidden; margin: 0 auto; text-align: left;height: 400px;"></div>
+        </div>
+        <div class="col-md-6 col-lg-6">
+            <h4 id="exportmap-nodata">No Data available</h4>
+        </div>
+    </div>
+</template>

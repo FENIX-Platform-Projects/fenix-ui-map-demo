@@ -15,7 +15,8 @@ require(
         routes: {
             '(/)join_gaul0': 'join_gaul0',
             '(/)join_gaul1': 'join_gaul1',
-            '(/)join_gaul2': 'join_gaul2'
+            '(/)join_gaul2': 'join_gaul2',
+            '(/)faostat_trade': 'faostat_trade'
         },
 
         join_gaul0: function() {
@@ -32,6 +33,12 @@ require(
 
         join_gaul2: function() {
             require(['fm_join_gaul2_module'], function(MODULE) {
+                new MODULE().init({});
+            });
+        },
+
+        faostat_trade: function() {
+            require(['fm_faostat_trade_module'], function(MODULE) {
                 new MODULE().init({});
             });
         },

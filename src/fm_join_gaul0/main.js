@@ -46,7 +46,7 @@ define(['jquery',
         var data = []
         rawData.forEach(function(d){
             var v = {};
-            v[d[0]] = d[2]
+            v[d[0]] = parseFloat(d[2])
             data.push(v)
         });
 
@@ -60,7 +60,7 @@ define(['jquery',
             opacity: '0.6',
             joincolumn: joincolumn,
             joincolumnlabel: joincolumnlabel,
-            joindata: JSON.stringify(data),
+            joindata: data,
             mu: mu,
             measurementunit: mu,
             layertype: 'JOIN',

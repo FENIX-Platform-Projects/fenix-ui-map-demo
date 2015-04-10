@@ -32,7 +32,9 @@ requirejs.config({
         'fm_join_gaul1_module' : modules + 'fm_join_gaul1/main',
         'fm_join_gaul1'        : modules + 'fm_join_gaul1',
         'fm_join_gaul2_module' : modules + 'fm_join_gaul2/main',
-        'fm_join_gaul2'        : modules + 'fm_join_gaul2'
+        'fm_join_gaul2'        : modules + 'fm_join_gaul2',
+        'fm_faostat_trade_module' : modules + 'fm_faostat_trade/main',
+        'fm_faostat_trade'        : modules + 'fm_faostat_trade'
     },
 
     shim: {
