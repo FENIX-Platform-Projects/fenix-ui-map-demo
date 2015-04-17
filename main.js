@@ -5,6 +5,7 @@ requirejs.config({
     baseUrl: '',
 
     paths: {
+    	//TODO update using FENIX CDN urls
         'bootstrap': 'node_modules/bootstrap/dist/js/bootstrap.min',
         'jquery': 'node_modules/jquery/dist/jquery.min',
         'backbone': 'node_modules/backbone/backbone-min',
@@ -25,6 +26,8 @@ requirejs.config({
 
         'fenix-map': 'libs/fenix-ui-map/fenix-ui-map.min',
         'fenix-map-config': 'libs/fenix-ui-map/fenix-ui-map-config',
+        
+        'getwds': modules + 'common/getwds',        
 
         // MODULES
         'fm_join_gaul0_module' : modules + 'fm_join_gaul0/main',
@@ -34,7 +37,10 @@ requirejs.config({
         'fm_join_gaul2_module' : modules + 'fm_join_gaul2/main',
         'fm_join_gaul2'        : modules + 'fm_join_gaul2',
         'fm_faostat_trade_module' : modules + 'fm_faostat_trade/main',
-        'fm_faostat_trade'        : modules + 'fm_faostat_trade'
+        'fm_faostat_trade'        : modules + 'fm_faostat_trade',
+		'fm_gts_module' : modules + 'fm_gts/main',
+        'fm_gts'        : modules + 'fm_gts'      
+
     },
 
     shim: {
