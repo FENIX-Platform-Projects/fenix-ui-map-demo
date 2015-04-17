@@ -68,7 +68,7 @@ define(['jquery',
             lang: 'en',
             customgfi: {
                 content: {
-                    en: "<div class='fm-popup'>{{" + joincolumnlabel + "}} <div class='fm-popup-join-content'>{{{" + joincolumn + "}}}</div></div>"
+                    en: "<div class='fm-popup'>{{" + joincolumnlabel + "}} <div class='fm-popup-join-content'>{{{" + joincolumn + "}}} "+ mu +"</div></div>"
                 },
                 showpopup: true
             }
