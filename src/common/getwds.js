@@ -11,8 +11,8 @@ define(['jquery', 'underscore'], function($, _) {
 
  	function GETWDS() {
 
+		this.serviceUrl =  'http://faostat3.fao.org/wds/';
         this.opts = {
-        	serviceUrl: 'http://faostat3.fao.org/wds/',
 			datasource: 'demo_fenix',
 			thousandSeparator: ',',
 			decimalSeparator: '.',
@@ -39,7 +39,7 @@ define(['jquery', 'underscore'], function($, _) {
 
 		if(_.isFunction(callback))
 			ret = $.ajax({
-				url: this.opts.serviceUrl,
+				url: this.serviceUrl,
 				data: data,
 				type: 'POST',
 				dataType: 'JSON',
@@ -48,7 +48,7 @@ define(['jquery', 'underscore'], function($, _) {
 		else
 			$.ajax({
 				async: false,
-				url: this.opts.wdsUrl,
+				url: this.serviceUrl,
 				data: data,
 				type: 'POST',
 				dataType: 'JSON',
