@@ -1,11 +1,19 @@
 <template id="template">
 
 	<form class="form-inline">
-	    	<label for="year" class="">Select Year:</label>&nbsp;
-	    	<select class="form-control" id="year" name="year">
-	    		<!-- FILLED BY JS -->
-	    	</select>
-	    </div>
+		<div class="form-group">
+			<label for="country" class="">Select Country:</label>&nbsp;
+			<select class="form-control" id="country" name="country">
+				<option value="">All countries</option>
+				<!-- FILLED BY JS -->
+			</select>
+		</div>
+		<div class="form-group">
+			<label for="year" class="">Select Year:</label>&nbsp;
+			<select class="form-control" id="year" name="year">
+				<!-- FILLED BY JS -->
+			</select>
+		</div>		
 		<div>
 		<br />
 	    	<div id='map' style='height: 400px;overflow: hidden; margin: 0 auto; text-align: left;'></div>

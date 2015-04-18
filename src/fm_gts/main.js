@@ -65,6 +65,13 @@ define(['jquery',
 
 
 		///////select boxes
+		var FIELD = 'country';
+		wds.query("select distinct "+FIELD+" from gts order by "+FIELD+" ASC",null, function(data) {
+
+			_.each(data, function(v) {
+				$('#country').append('<option value="'+v+'">'+v+'</option>');
+			});
+		});		
 
 		var FIELD = 'date';
 		wds.query("select distinct "+FIELD+" from gts order by "+FIELD+" DESC",null, function(data) {
@@ -76,21 +83,16 @@ define(['jquery',
 			});
 		});
 
-		var FIELD = 'country';
-		wds.query("select distinct "+FIELD+" from gts order by "+FIELD,null, function(data) {
-
-			_.each(_.uniq(_.map(data, function(v) {
-				return v[0].substr(0,4);
-			})), function(v) {
-				$('#country').append('<option value="'+v+'">'+v+'</option>');
-			});
-		});		
-
-		$('#year').on('change', function(e) {
+		$('#country, #year').on('change', function(e) {
 			
-			self.updateMap({date: $(this).val() });
+			var filter = {
+				date: $('#year').val(),
+				country: $('#country').val()
+			};
 
-		}).trigger('change');
+			self.updateMap(filter);
+
+		});
 
     };
 
@@ -104,10 +106,12 @@ define(['jquery',
 
 		var sql = "SELECT * FROM gts WHERE date LIKE '{date}%' ";
 
-		if(filter.country)
+		if(filter.country!=='')
 			sql += " AND country = '{country}'";
 
-		wds.query(sql, filter, function(data) {
+		console.log(sql);
+
+		wds.query(sql, filter, function(data, query) {
 			
 			if(!data || data.length===0)
 				return false;
@@ -123,7 +127,7 @@ define(['jquery',
 			});
 
 			data = _.groupBy(data, function(v) {
-				return v.country;
+				return v.station;
 			});
 
 			console.log(data);
