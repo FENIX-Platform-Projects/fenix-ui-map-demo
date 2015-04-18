@@ -2,6 +2,10 @@ define(function() {
 
 	return window.FMCONFIG = {
 
+		BASEURL_MAPS: 'http://fenixapps2.fao.org/maps-demo',
+
+		MAP_SERVICE_WMS_GET_CAPABILITIES: '/rest/service/request',
+
 		BASEURL_LANG: 'libs/fenix-ui-map/i18n/',
 
 		MAP_SERVICE_SHADED: 'http://fenix.fao.org/test/geo/fenix/mapclassify/join/',
