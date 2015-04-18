@@ -1,7 +1,8 @@
 define(['jquery',
     'handlebars',
+    'highcharts',
     'text!fm_join_gaul2/html/template.html',
-    'fenix-map'], function ($, Handlebars, template) {
+    'fenix-map'], function ($, Handlebars, highcharts, template) {
 
     'use strict';
 

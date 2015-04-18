@@ -1,27 +1,39 @@
 <template id="template">
 
-	<form class="form-inline">
-		<div class="form-group">
-			<label for="country" class="">Select Country:</label>&nbsp;
-			<select class="form-control" id="country" name="country">
-				<option value="">All countries</option>
-				<!-- FILLED BY JS -->
-			</select>
-		</div>
-		<div class="form-group">
-			<label for="year" class="">Select Year:</label>&nbsp;
-			<select class="form-control" id="year" name="year">
-				<!-- FILLED BY JS -->
-			</select>
-		</div>		
-		<div>
-		<br />
-	    	<div id='map' style='height: 400px;overflow: hidden; margin: 0 auto; text-align: left;'></div>
-	    </div>
-	    <div class="">
-	    	CHART
-	    </div>
-    </form>
+	<div class="navbar-form">
+			<div class="form-group">
+				<label for="country" class="">Select Country:</label>&nbsp;
+				<select class="form-control" id="country" name="country">
+					<option value="">All countries</option>
+					<!-- FILLED BY JS -->
+				</select>
+			</div>
+			<div class="form-group">
+				<label for="year" class="">Select Year:</label>&nbsp;
+				<select class="form-control" id="year" name="year">
+					<!-- FILLED BY JS -->
+				</select>
+			</div>
+	</div>
+	<div>
+		<div id="map" style="height: 400px;overflow: hidden; margin: 0 auto; text-align: left;"></div>
+	</div>
+	<div class="modal fade" id="modalchart">
+	    <div class="modal-dialog modal-lg">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	                <h4 class="modal-title"></h4>
+	            </div>
+	            <div class="modal-body">
+	    			
+	    			<div id="resultchart"></div>
+
+	            </div>
+	        </div><!-- /.modal-content -->
+	    </div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+
 </template>
 
 <template id="popup">
@@ -30,7 +42,8 @@
 		<small>{{country}}</small><br />	
 		<b>{{station_name}}</b><br />
 		<em>{{station}}</em><br />
-		elevation: {{elevation}}
+		elevation: {{elevation}}<br /><br />
+		<a data-station="{{station}}" class="btn btn-default btn-sm" href="#">View Timeseries</a>
 	{{/with}}
 	</div>
 </template>

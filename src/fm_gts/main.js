@@ -1,10 +1,12 @@
 define(['jquery',
     'underscore',	
     'handlebars',
+    'highcharts',
     'leaflet',
+    'bootstrap',    
     'getwds',
     'text!fm_gts/html/templates.html',
-    'fenix-map'], function ($, _, Handlebars, L, getwds, templates) {
+    'fenix-map'], function ($, _, Handlebars, highcharts, L, bootstrap, getwds, templates) {
 
     'use strict';
 
@@ -63,7 +65,6 @@ define(['jquery',
 
 		self.layerMarkers = L.layerGroup().addTo(self.map);
 
-
 		///////select boxes
 		var FIELD = 'country';
 		wds.query("select distinct "+FIELD+" from gts order by "+FIELD+" ASC",null, function(data) {
@@ -84,15 +85,27 @@ define(['jquery',
 		});
 
 		$('#country, #year').on('change', function(e) {
-			
-			var filter = {
-				date: $('#year').val(),
-				country: $('#country').val()
-			};
-
-			self.updateMap(filter);
-
+			self.updateMap({
+				country: $('#country').val(),
+				date:    $('#year').val()				
+			});
 		});
+
+		$('#map').on('click','.leaflet-popup .btn', function(e) {
+			e.preventDefault();
+
+			self.updateChart({
+				station: $(e.target).data('station'),
+				country: $('#country').val(),
+				date:    $('#year').val()				
+			});
+		});
+
+
+		self.updateMap({
+			country: $('#country').val(),
+			date:    $('#year').val()				
+		});		
 
     };
 
@@ -102,16 +115,12 @@ define(['jquery',
 			map = self.map,
 			ll = [];
 
-
-
 		var sql = "SELECT * FROM gts WHERE date LIKE '{date}%' ";
 
-		if(filter.country!=='')
+		if(filter.country)
 			sql += " AND country = '{country}'";
 
-		console.log(sql);
-
-		wds.query(sql, filter, function(data, query) {
+		wds.query(sql, filter, function(data) {
 			
 			if(!data || data.length===0)
 				return false;
@@ -152,6 +161,93 @@ define(['jquery',
 
 			map.fitBounds( L.latLngBounds(ll) );
 		});
+    };
+
+    FM_GTS.prototype.updateChart = function(filter) {
+
+		var self = this,
+			map = self.map,
+			ll = [];
+
+		var sql = "SELECT * FROM gts WHERE date LIKE '{date}%' ";
+
+		if(filter.country)
+			sql += " AND country = '{country}'";
+
+		if(filter.station)
+			sql += " AND station = '{station}'";
+
+		wds.query(sql, filter, function(data) {
+			
+			data = _.map(data, function(v) {
+				return _.object([
+					"country","station","station_name",
+					"elevation","latitude","longitude","date",
+					"monthly_precip","max_temp","min_temp","mean_temp",
+					], v);
+			});
+
+			data = _.map(data, function(v) {
+				v.elevation = parseInt(v.elevation);
+				v.date = parseInt(v.date);
+				v.monthly_precip = parseInt(v.monthly_precip);
+				v.max_temp = parseInt(v.max_temp);
+				v.min_temp = parseInt(v.min_temp);
+				v.mean_temp = parseInt(v.mean_temp);
+				return v;
+			});
+
+			data = _.pluck(data,'max_temp');
+
+			var title = _.values(filter).join(' &bull; ');
+        	$('#modalchart').modal('show').find('.modal-title').html('STATION: '+title);
+
+			self.renderChart(data);
+		});
+    };
+
+
+    FM_GTS.prototype.renderChart = function (data) {
+
+    	console.log(data);
+
+        return new Highcharts.Chart({
+        	chart: {
+	            renderTo: 'resultchart',
+	            type: "line"
+	        },
+	        series: this.getChartSeries(data)
+        });
+    };
+
+    FM_GTS.prototype.getChartSeries = function (data) {
+        
+        var retSeries = [{name: 'nome', data: data}];
+
+/*        for (var i = 0; i < data.length; i++) {
+            retSeries.push(data[i][1]);
+        }
+        retSeries = _.uniq(retSeries);
+
+        // get series (names)
+        var series = []
+        for (var i = 0; i < retSeries.length; i++) {
+            series.push({
+                name: retSeries[i],
+                data: []
+            });
+        }
+
+        // get data
+        for (var i = 0; i < data.length; i++) {
+            for (var j = 0; j < series.length; j++) {
+                if (data[i][1] == series[j].name) {
+                    series[j].data.push([parseFloat(data[i][2]), parseFloat(data[i][3])]);
+                    break;
+                }
+            }
+        }*/
+        return retSeries;
     };
 
     return FM_GTS;

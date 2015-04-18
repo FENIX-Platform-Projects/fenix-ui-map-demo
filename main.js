@@ -17,12 +17,14 @@ requirejs.config({
 
 
         // fenix-map-js
-        'import-dependencies':'http://fenixapps.fao.org/repository/js/FENIX/utils/import-dependencies-1.0',
+        'import-dependencies':'//fenixapps.fao.org/repository/js/FENIX/utils/import-dependencies-1.0',
         'leaflet': 'node_modules/leaflet/dist/leaflet',
         'jquery.power.tip': 'node_modules/jquery-powertip/dist/jquery.powertip.min',
-        'jquery-ui':   'http://fenixapps.fao.org/repository/js/jquery-ui/1.10.3/jquery-ui-1.10.3.custom.min',
-        'jquery.i18n.properties': 'http://fenixapps.fao.org/repository/js/jquery/1.0.9/jquery.i18n.properties-min',
+        'jquery-ui':   '//fenixapps.fao.org/repository/js/jquery-ui/1.10.3/jquery-ui-1.10.3.custom.min',
+        'jquery.i18n.properties': '//fenixapps.fao.org/repository/js/jquery/1.0.9/jquery.i18n.properties-min',
         'jquery.hoverIntent': 'node_modules/jquery.hoverIntent/jquery.hoverIntent.min',
+
+		'highcharts': "//fenixapps.fao.org/repository/js/highcharts/4.0.4/js/highcharts",
 
         'fenix-map': 'libs/fenix-ui-map/fenix-ui-map.min',
         'fenix-map-config': 'libs/fenix-ui-map/fenix-ui-map-config',
@@ -46,6 +48,7 @@ requirejs.config({
     shim: {
         'routing': ['main'],
         'bootstrap': ['jquery'],
+        'highcharts': ['jquery'],
         'jquery-ui': ['jquery'],
         'jquery.power.tip': ['jquery'],
         'jquery.i18n.properties': ['jquery'],
