@@ -1,43 +1,14 @@
 define(['jquery',
     'underscore',	
     'handlebars',
-    'leaflet',    
+    'leaflet',
+    'getwds',
     'text!fm_gts/html/template.html',
-    'fenix-map'], function ($, _, Handlebars, L, template) {
+    'fenix-map'], function ($, _, Handlebars, L, getwds, template) {
 
     'use strict';
 
-	function getWDS(queryTmpl, queryVars, callback) {
-
-	    var sqltmpl, sql;
-
-	    if(queryVars) {
-	        sqltmpl = _.template(queryTmpl);
-	        sql = sqltmpl(queryVars);
-	    }
-	    else
-	        sql = queryTmpl;
-
-	    var	data = {
-	        datasource: 'demo_fenix',
-	        thousandSeparator: ',',
-	        decimalSeparator: '.',
-	        decimalNumbers: 2,
-	        cssFilename: '',
-	        nowrap: false,
-	        valuesIndex: 0,
-	        json: JSON.stringify({query: sql})
-	    };
-
-	    $.ajax({
-	        url: 'http://faostat3.fao.org/wds/rest/table/json',
-	        data: data,
-	        type: 'POST',
-	        dataType: 'JSON',
-	        success: callback
-	    });
-	}
-    //console.log('istance',w);
+    var wds = new getwds();
 
     function FM_GTS() {
         this.o = {
@@ -100,26 +71,34 @@ define(['jquery',
 
 			var FIELD = 'date';
 
-		getWDS("select distinct "+FIELD+" from gts order by "+FIELD,null, function(data) {
-			_.each(data, function(v) {
-				//var d = Date.parseDate(v[0], "Ymd"),
-				//	date = d.dateFormat("Y / m / d");
-				var date = v[0];
+		wds.query("select distinct "+FIELD+" from gts order by "+FIELD,null, function(data) {
 
-				$('#months').append('<option value="'+date+'">'+date+'</option>');
+			var years = _.uniq(_.map(data, function(v) {
+				return v[0].substr(0,4);
+			}));
+
+			_.each(years, function(v) {
+				$('#year').append('<option value="'+v+'">'+v+'</option>');
 			});
 		});
 
-		$('#months').on('change', function(e) {
+		$('#year').on('change', function(e) {
 
 			var map = m.map,
 				layerMarkers = L.layerGroup(),
 				ll = [];
 
+window.layerMarkers = layerMarkers;
+
 			layerMarkers.addTo(map);
 
-			getWDS("select * from gts where date = '<%= date %>' ", { date: $(this).val() }, function(data) {
+			wds.query("select * from gts where date LIKE '{date}%' ", { date: $(this).val() }, function(data) {
 				
+				if(!data || data.length===0)
+					return false;
+
+				console.log(data)
+
 				layerMarkers.clearLayers();
 
 				_.each(data, function(v,k) {

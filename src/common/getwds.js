@@ -1,5 +1,5 @@
 
-define(['jquery', 'underscore'], function($, _) {
+define(['jquery'], function($) {
 
     'use strict';
 
@@ -9,10 +9,10 @@ define(['jquery', 'underscore'], function($, _) {
 		});
 	}
 
- 	function GETWDS() {
+ 	function GETWDS(config) {
 
-		this.serviceUrl =  'http://faostat3.fao.org/wds/';
-        this.opts = {
+        this.opts = $.extend({
+        	serviceUrl: 'http://faostat3.fao.org/wds/rest/table/json',
 			datasource: 'demo_fenix',
 			thousandSeparator: ',',
 			decimalSeparator: '.',
@@ -21,25 +21,22 @@ define(['jquery', 'underscore'], function($, _) {
 			nowrap: false,
 			valuesIndex: 0,
 			json: JSON.stringify({query: ''})
-		};
-    }
+		}, config);
 
-    GETWDS.prototype.init = function(config) {
-    	this.opts = _.extend(this.opts, config);
-    	return this;
-    };
+		return this;
+    }
 
     GETWDS.prototype.query = function(queryTmpl, queryVars, callback) {
 
 		var ret,
-			sql = queryVars ? _template(queryTmpl, queryVars) : queryTmpl,
-			data = _.extend(this.opts, {
+			sql = $.isPlainObject(queryVars) ? _template(queryTmpl, queryVars) : queryTmpl,
+			data = $.extend(this.opts, {
 				json: JSON.stringify({query: sql})
 			});
 
-		if(_.isFunction(callback))
+		if($.isFunction(callback))
 			ret = $.ajax({
-				url: this.serviceUrl,
+				url: this.opts.serviceUrl,
 				data: data,
 				type: 'POST',
 				dataType: 'JSON',
@@ -48,7 +45,7 @@ define(['jquery', 'underscore'], function($, _) {
 		else
 			$.ajax({
 				async: false,
-				url: this.serviceUrl,
+				url: this.opts.serviceUrl,
 				data: data,
 				type: 'POST',
 				dataType: 'JSON',
