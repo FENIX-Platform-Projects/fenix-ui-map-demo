@@ -3,8 +3,8 @@ define(['jquery',
     'handlebars',
     'leaflet',
     'getwds',
-    'text!fm_gts/html/template.html',
-    'fenix-map'], function ($, _, Handlebars, L, getwds, template) {
+    'text!fm_gts/html/templates.html',
+    'fenix-map'], function ($, _, Handlebars, L, getwds, templates) {
 
     'use strict';
 
@@ -19,15 +19,17 @@ define(['jquery',
 
     FM_GTS.prototype.init = function(config) {
 
+    	var self = this;
+
         this.o = $.extend(true, {}, this.o, config);
         
-        var source = $(template).filter('#template').html();
+        var source = $(templates).filter('#template').html();
         var t = Handlebars.compile(source);
         var html = t();
         $('#' + this.o.placeholder).html(html);
 
         // map
-        var m = new FM.Map('map', {
+        var fm = new FM.Map('map', {
             plugins: {
                 geosearch: true,
                 mouseposition: false,
@@ -47,9 +49,11 @@ define(['jquery',
             attributionControl: false
         });
         
-        m.createMap();
+        fm.createMap();
 
-		m.addLayer( new FM.layer({
+        self.map = fm.map;
+
+		fm.addLayer( new FM.layer({
 			layers: 'fenix:gaul0_line_3857',
 			layertitle: 'Country Boundaries',
 			urlWMS: 'http://fenixapps.fao.org/geoserver',
@@ -57,71 +61,93 @@ define(['jquery',
 			lang: 'en'
 		}) );
 
-/*			0: "Egypt",
-			1: "GHCND:EG000062417",
-			2: "SIWA EG",
-			3: "-15",
-			4: "29.199999999999999",
-			5: "25.316700000000001",
-			6: "19940101",
-			7: "130",
-			8: "193",
-			9: "91",
-			10: "142"*/
+		self.layerMarkers = L.layerGroup().addTo(self.map);
 
-			var FIELD = 'date';
 
-		wds.query("select distinct "+FIELD+" from gts order by "+FIELD,null, function(data) {
+		///////select boxes
 
-			var years = _.uniq(_.map(data, function(v) {
+		var FIELD = 'date';
+		wds.query("select distinct "+FIELD+" from gts order by "+FIELD+" DESC",null, function(data) {
+
+			_.each(_.uniq(_.map(data, function(v) {
 				return v[0].substr(0,4);
-			}));
-
-			_.each(years, function(v) {
+			})), function(v) {
 				$('#year').append('<option value="'+v+'">'+v+'</option>');
 			});
 		});
 
-		$('#year').on('change', function(e) {
+		var FIELD = 'country';
+		wds.query("select distinct "+FIELD+" from gts order by "+FIELD,null, function(data) {
 
-			var map = m.map,
-				layerMarkers = L.layerGroup(),
-				ll = [];
-
-window.layerMarkers = layerMarkers;
-
-			layerMarkers.addTo(map);
-
-			wds.query("select * from gts where date LIKE '{date}%' ", { date: $(this).val() }, function(data) {
-				
-				if(!data || data.length===0)
-					return false;
-
-				console.log(data)
-
-				layerMarkers.clearLayers();
-
-				_.each(data, function(v,k) {
-
-					var loc = L.latLng( parseFloat(v[4]), parseFloat(v[5]) );
-
-					ll.push(loc);
-
-					var mark = L.marker(loc);
-
-					mark.on('mouseover', function(e) {
-						e.target.openPopup();
-					});
-
-					mark.bindPopup( '<pre>'+JSON.stringify(v)+'</pre>' );
-
-					mark.addTo(layerMarkers);
-				});
-
-				map.fitBounds( L.latLngBounds(ll) );
+			_.each(_.uniq(_.map(data, function(v) {
+				return v[0].substr(0,4);
+			})), function(v) {
+				$('#country').append('<option value="'+v+'">'+v+'</option>');
 			});
-		});
+		});		
 
+		$('#year').on('change', function(e) {
+			
+			self.updateMap({date: $(this).val() });
+
+		}).trigger('change');
+
+    };
+
+    FM_GTS.prototype.updateMap = function(filter) {
+
+		var self = this,
+			map = self.map,
+			ll = [];
+
+
+
+		var sql = "SELECT * FROM gts WHERE date LIKE '{date}%' ";
+
+		if(filter.country)
+			sql += " AND country = '{country}'";
+
+		wds.query(sql, filter, function(data) {
+			
+			if(!data || data.length===0)
+				return false;
+
+			self.layerMarkers.clearLayers();
+
+			data = _.map(data, function(v){
+				return _.object([
+					"country","station","station_name",
+					"elevation","latitude","longitude","date",
+					"monthly_precip","max_temp","min_temp","mean_temp",
+					], v);
+			});
+
+			data = _.groupBy(data, function(v) {
+				return v.country;
+			});
+
+			console.log(data);
+
+			var popupTmpl = Handlebars.compile($(templates).filter('#popup').html());
+			//var months = 
+
+			_.each(data, function(vals, country) {
+
+				var loc = L.latLng( parseFloat(vals[0].latitude), parseFloat(vals[0].longitude) );
+
+				ll.push(loc);
+
+				var mark = L.marker(loc);
+
+				mark.on('mouseover', function(e) {
+					e.target.openPopup();
+				})
+				.bindPopup( popupTmpl(vals[0]) )
+				.addTo(self.layerMarkers);
+			});
+
+			map.fitBounds( L.latLngBounds(ll) );
+		});
     };
 
     return FM_GTS;

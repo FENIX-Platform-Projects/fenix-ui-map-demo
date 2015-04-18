@@ -15,3 +15,14 @@
 	    </div>
     </form>
 </template>
+
+<template id="popup">
+	<div>
+	{{#with this}}
+		<small>{{country}}</small><br />	
+		<b>{{station_name}}</b><br />
+		<em>{{station}}</em><br />
+		elevation: {{elevation}}
+	{{/with}}
+	</div>
+</template>
