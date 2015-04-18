@@ -169,13 +169,17 @@ define(['jquery',
 			map = self.map,
 			ll = [];
 
-		var sql = "SELECT * FROM gts WHERE date LIKE '{date}%' ";
-
-		if(filter.country)
-			sql += " AND country = '{country}'";
+		var sql = "SELECT * FROM gts WHERE ";
 
 		if(filter.station)
-			sql += " AND station = '{station}'";
+			sql += " station = '{station}'";
+
+		function normalizeVal(str) {
+			var v = (parseInt(str)/10);
+			if(v === -9999)
+				return 0;
+			return v;
+		}
 
 		wds.query(sql, filter, function(data) {
 			
@@ -188,16 +192,20 @@ define(['jquery',
 			});
 
 			data = _.map(data, function(v) {
+				
 				v.elevation = parseInt(v.elevation);
 				v.date = parseInt(v.date);
-				v.monthly_precip = parseInt(v.monthly_precip);
-				v.max_temp = parseInt(v.max_temp);
-				v.min_temp = parseInt(v.min_temp);
-				v.mean_temp = parseInt(v.mean_temp);
+
+				v.max_temp  = normalizeVal(v.max_temp);
+				v.min_temp  = normalizeVal(v.min_temp);
+				v.mean_temp = normalizeVal(v.mean_temp);
+				v.monthly_precip = normalizeVal(v.monthly_precip);				
 				return v;
 			});
 
-			data = _.pluck(data,'max_temp');
+			console.log(sql, data);
+
+			data = _.pluck(data,'min_temp');
 
 			var title = _.values(filter).join(' &bull; ');
         	$('#modalchart').modal('show').find('.modal-title').html('STATION: '+title);
