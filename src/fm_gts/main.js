@@ -12,6 +12,8 @@ define(['jquery',
 
     var wds = new getwds();
 
+	var listMonths = ["","January","February","March","April","May","June","July","August","September","October","November","December"];
+
     function FM_GTS() {
         this.o = {
             'lang': 'en',
@@ -77,17 +79,21 @@ define(['jquery',
 		var FIELD = 'date';
 		wds.query("select distinct "+FIELD+" from gts order by "+FIELD+" DESC",null, function(data) {
 
-			_.each(_.uniq(_.map(data, function(v) {
-				return v[0].substr(0,4);
-			})), function(v) {
-				$('#year').append('<option value="'+v+'">'+v+'</option>');
+			data = _.uniq(_.map(data, function(v) {
+				return v[0].substr(4,4);
+			}));
+
+			data.sort();
+
+			_.each(data, function(v) {
+				$('#month').append('<option value="'+v+'">'+listMonths[parseInt(v.substr(0,2))]+'</option>');
 			});
 		});
 
-		$('#country, #year').on('change', function(e) {
+		$('#country, #month').on('change', function(e) {
 			self.updateMap({
 				country: $('#country').val(),
-				date:    $('#year').val()				
+				date:    $('#month').val()				
 			});
 		});
 
@@ -97,14 +103,14 @@ define(['jquery',
 			self.updateChart({
 				station: $(e.target).data('station'),
 				country: $('#country').val(),
-				date:    $('#year').val()				
+				date:    $('#month').val()				
 			});
 		});
 
 
 		self.updateMap({
 			country: $('#country').val(),
-			date:    $('#year').val()				
+			date:    $('#month').val()				
 		});		
 
     };
@@ -115,7 +121,7 @@ define(['jquery',
 			map = self.map,
 			ll = [];
 
-		var sql = "SELECT * FROM gts WHERE date LIKE '{date}%' ";
+		var sql = "SELECT * FROM gts WHERE date LIKE '%{date}' ";
 
 		if(filter.country)
 			sql += " AND country = '{country}'";
@@ -169,14 +175,14 @@ define(['jquery',
 			map = self.map,
 			ll = [];
 
-		var sql = "SELECT * FROM gts WHERE ";
+		var sql = "SELECT * FROM gts WHERE date LIKE '%{date}' ";
 
 		if(filter.station)
-			sql += " station = '{station}'";
+			sql += " AND station = '{station}'";
 
 		function normalizeVal(str) {
 			var v = (parseInt(str)/10);
-			if(v === -9999)
+			if(v === -999)
 				return 0;
 			return v;
 		}
@@ -199,15 +205,11 @@ define(['jquery',
 				v.max_temp  = normalizeVal(v.max_temp);
 				v.min_temp  = normalizeVal(v.min_temp);
 				v.mean_temp = normalizeVal(v.mean_temp);
-				v.monthly_precip = normalizeVal(v.monthly_precip);				
+				v.monthly_precip = normalizeVal(v.monthly_precip);			
 				return v;
 			});
 
-			console.log(sql, data);
-
-			data = _.pluck(data,'min_temp');
-
-			var title = _.values(filter).join(' &bull; ');
+			var title = [data[0].station, listMonths[parseInt($('#month').val().substr(0,2))]].join(' &bull; ');
         	$('#modalchart').modal('show').find('.modal-title').html('STATION: '+title);
 
 			self.renderChart(data);
@@ -222,39 +224,26 @@ define(['jquery',
         return new Highcharts.Chart({
         	chart: {
 	            renderTo: 'resultchart',
-	            type: "line"
+	            type: 'line',
+	            width: 500
 	        },
-	        series: this.getChartSeries(data)
+	        series: this.getChartSeries(data),
+	        xAxis: {
+	        	categories: _.map(_.pluck(data,'date'), function(d) {
+	        		console.log(d)
+	        		return parseInt((d+"").substr(0,4));
+	        	}).sort()
+			},
         });
     };
 
     FM_GTS.prototype.getChartSeries = function (data) {
-        
-        var retSeries = [{name: 'nome', data: data}];
 
-/*        for (var i = 0; i < data.length; i++) {
-            retSeries.push(data[i][1]);
-        }
-        retSeries = _.uniq(retSeries);
+        var retSeries = [
+        	{name: 'max_temp', data: _.pluck(data,'max_temp') },
+        	{name: 'min_temp', data: _.pluck(data,'min_temp') }
+        ];
 
-        // get series (names)
-        var series = []
-        for (var i = 0; i < retSeries.length; i++) {
-            series.push({
-                name: retSeries[i],
-                data: []
-            });
-        }
-
-        // get data
-        for (var i = 0; i < data.length; i++) {
-            for (var j = 0; j < series.length; j++) {
-                if (data[i][1] == series[j].name) {
-                    series[j].data.push([parseFloat(data[i][2]), parseFloat(data[i][3])]);
-                    break;
-                }
-            }
-        }*/
         return retSeries;
     };
 
