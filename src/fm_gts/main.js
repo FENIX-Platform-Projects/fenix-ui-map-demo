@@ -222,26 +222,31 @@ define(['jquery',
     	console.log(data);
 
         return new Highcharts.Chart({
+        	title: '',
+        	credits:'',
         	chart: {
 	            renderTo: 'resultchart',
 	            type: 'line',
 	            width: 500
 	        },
 	        series: this.getChartSeries(data),
+	        yAxis: {
+	        	title: ''
+	        },
 	        xAxis: {
 	        	categories: _.map(_.pluck(data,'date'), function(d) {
 	        		console.log(d)
 	        		return parseInt((d+"").substr(0,4));
 	        	}).sort()
-			},
+			}
         });
     };
 
     FM_GTS.prototype.getChartSeries = function (data) {
 
         var retSeries = [
-        	{name: 'max_temp', data: _.pluck(data,'max_temp') },
-        	{name: 'min_temp', data: _.pluck(data,'min_temp') }
+        	{name: 'max temp', color:'#f00', data: _.pluck(data,'max_temp') },
+        	{name: 'min temp', color:'#00f', data: _.pluck(data,'min_temp') }
         ];
 
         return retSeries;
