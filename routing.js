@@ -16,8 +16,15 @@ require(
             '(/)join_gaul0': 'join_gaul0',
             '(/)join_gaul1': 'join_gaul1',
             '(/)join_gaul2': 'join_gaul2',
-            '(/)faostat_trade': 'faostat_trade',
-            '(/)gts': 'gts'
+            //'(/)faostat_trade': 'faostat_trade',
+            '(/)gts': 'gts',
+            '*path':  'defaultRoute'
+        },
+
+        defaultRoute: function(path) {
+            for (var i in this.routes) {
+                console.log(i);
+            }
         },
 
         join_gaul0: function() {
@@ -48,7 +55,7 @@ require(
             require(['fm_gts_module'], function(MODULE) {
                 new MODULE().init({});
             });
-        },        
+        },
 
         _init: function (lang) {
             if (lang) {
