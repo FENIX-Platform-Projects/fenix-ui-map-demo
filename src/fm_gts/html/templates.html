@@ -1,22 +1,22 @@
 <template id="template">
 
-	<div class="navbar-form">
-			<div class="form-group">
-				<label for="country" class="">Select Country:</label>&nbsp;
+	<div class="form-inline">
+			<div class="form-group col-xs-6">
+				<label for="country" class="form-label">Select Country:</label>&nbsp;
 				<select class="form-control" id="country" name="country">
 					<option value="">All countries</option>
 					<!-- FILLED BY JS -->
 				</select>
 			</div>
-			<div class="form-group">
-				<label for="month" class="">Select Month:</label>&nbsp;
+			<div class="form-group col-xs-6">
+				<label for="month" class="form-label">Select Month:</label>&nbsp;
 				<select class="form-control" id="month" name="month">
 					<!-- FILLED BY JS -->
 				</select>
 			</div>
 	</div>
 	<div>
-		<div id="map" style="position:absolute;top:50px;left:0;right:0;bottom:0"></div>
+		<div id="map" style="position:absolute;top:70px;left:0;right:0;bottom:0"></div>
 	</div>
 	<div class="modal fade" id="modalchart">
 	    <div class="modal-dialog modal-lg">
